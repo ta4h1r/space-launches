@@ -3,12 +3,26 @@ import { defineComponent } from "vue";
 import { useLaunchStore } from "../store/launchStore.ts";
 
 const launchStore = useLaunchStore();
-launchStore.fetchLaunches();
+if (!launchStore.getLaunches.length) launchStore.fetchLaunches();
 </script>
 
 <template>
   <div>
-    <table class="table table-xs table-pin-rows">
+    <span
+      class="loading loading-bars loading-lg self-center"
+      v-if="
+        launchStore.getAsyncStatus.find((it) => it.name === 'fetchLaunches')
+          .status === 'loading'
+      "
+    />
+
+    <table
+      v-if="
+        launchStore.getAsyncStatus.find((it) => it.name === 'fetchLaunches')
+          .status === 'success'
+      "
+      class="table table-xs table-pin-rows"
+    >
       <thead>
         <tr>
           <th>Flight No.</th>
