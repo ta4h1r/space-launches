@@ -3,14 +3,11 @@ import { defineComponent } from "vue";
 import { useLaunchStore } from "../store/launchStore.ts";
 
 const launchStore = useLaunchStore();
+launchStore.fetchLaunches();
 </script>
 
 <template>
   <div>
-    <h1>SpaceX Launches</h1>
-    <button class="btn btn-sm btn-neutral" @click="launchStore.fetchLaunches">
-      Load Launches
-    </button>
     <table class="table table-xs table-pin-rows">
       <thead>
         <tr>
