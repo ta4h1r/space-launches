@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+
 interface Launch {
   flight_number: number;
   name: string;
   date_utc: string;
 }
+
 export const useLaunchStore = defineStore("launch", {
   state: () => ({
     launches: [] as Launch[],
@@ -23,10 +25,12 @@ export const useLaunchStore = defineStore("launch", {
         )
         .slice(0, 30);
     },
+
     saveLaunch(launch: Launch) {
       this.savedLaunches.push(launch);
       // Here, you would also send a request to your backend to save the launch
     },
+
     removeLaunch(flight_number: number) {
       this.savedLaunches = this.savedLaunches.filter(
         (launch) => launch.flight_number !== flight_number,
