@@ -7,41 +7,93 @@ interface Launch {
   date_utc: string;
 }
 
+interface AsyncStatus {
+  name: "fetchLaunches" | "getSavedLaunches" | "removeLaunch" | "saveLaunch";
+  status: "loading" | "failed" | "success";
+}
+
 export const useLaunchStore = defineStore("launch", {
   state: () => ({
     launches: [] as Launch[],
     savedLaunches: [] as Launch[],
+    status: [] as AsyncStatus[],
   }),
+
+  getters: {
+    status: (state) => state.status,
+  },
 
   actions: {
     async fetchLaunches() {
-      const response = await axios.get(
-        "https://api.spacexdata.com/v4/launches",
-      );
-      this.launches = response.data
-        .sort(
-          (a: Launch, b: Launch) =>
-            new Date(b.date_utc).getTime() - new Date(a.date_utc).getTime(),
-        )
-        .slice(0, 30);
+      try {
+        this._updateStatusArray({ name: "fetchLaunches", status: "loading" });
+        const response = await axios.get(
+          "https://api.spacexdata.com/v4/launches",
+        );
+        this.launches = response.data
+          .sort(
+            (a: Launch, b: Launch) =>
+              new Date(b.date_utc).getTime() - new Date(a.date_utc).getTime(),
+          )
+          .slice(0, 30);
+        this._updateStatusArray({ name: "fetchLaunches", status: "success" });
+      } catch (error) {
+        console.error(error);
+        this._updateStatusArray({ name: "fetchLaunches", status: "failed" });
+      }
     },
 
     async saveLaunch(launch: Launch) {
-      await axios.post("/api/launch", { launch });
-      this.savedLaunches.push(launch);
+      try {
+        this._updateStatusArray({ name: "saveLaunch", status: "loading" });
+        await axios.post("/api/launch", { launch });
+        this.savedLaunches.push(launch);
+        this._updateStatusArray({ name: "saveLaunch", status: "success" });
+        await axios.post("/api/launch", { launch });
+      } catch (error) {
+        console.error(error);
+        this._updateStatusArray({ name: "saveLaunch", status: "failed" });
+      }
     },
 
     async removeLaunch(flight_number: number) {
-      await axios.delete("/api/launch?flight_number=" + flight_number);
-      this.savedLaunches = this.savedLaunches.filter(
-        (launch) => launch.flight_number !== flight_number,
-      );
+      try {
+        this._updateStatusArray({ name: "removeLaunch", status: "loading" });
+        await axios.delete("/api/launch?flight_number=" + flight_number);
+        this.savedLaunches = this.savedLaunches.filter(
+          (launch) => launch.flight_number !== flight_number,
+        );
+        this._updateStatusArray({ name: "removeLaunch", status: "success" });
+      } catch (error) {
+        console.error(error);
+        this._updateStatusArray({ name: "removeLaunch", status: "failed" });
+      }
     },
 
     async getSavedLaunches() {
-      const response = await axios.get("/api/launch");
-      this.savedLaunches = response.data?.launches;
-      return this.savedLaunches;
+      try {
+        this._updateStatusArray({
+          name: "getSavedLaunches",
+          status: "loading",
+        });
+        const response = await axios.get("/api/launch");
+        this.savedLaunches = response.data?.launches;
+        this._updateStatusArray({
+          name: "getSavedLaunches",
+          status: "success",
+        });
+        return this.savedLaunches;
+      } catch (error) {
+        console.error(error);
+        this._updateStatusArray({ name: "getSavedLaunches", status: "failed" });
+      }
+    },
+
+    _updateStatusArray(asyncStatus: AsyncStatus) {
+      const statusIndex = this.status.findIndex(
+        (it) => it.name === asyncStatus.name,
+      );
+      this.status[statusIndex].status = asyncStatus.status;
     },
   },
 });

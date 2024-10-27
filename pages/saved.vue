@@ -7,7 +7,6 @@ launchStore.getSavedLaunches();
 
 <template>
   <div>
-    <h1>Saved Launches</h1>
     <div
       v-for="launch in launchStore.savedLaunches"
       :key="launch.flight_number"
