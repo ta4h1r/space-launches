@@ -68,7 +68,7 @@ const LaunchSchema = new Schema({
   capsules: { type: [String], default: [] },
   payloads: { type: [String], default: [] },
   launchpad: { type: String, required: true },
-  flight_number: { type: Number, required: true },
+  flight_number: { type: Number, required: true, unique: true },
   name: { type: String, required: true },
   date_utc: { type: Date, required: true },
   date_unix: { type: Number, required: true },

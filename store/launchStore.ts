@@ -47,10 +47,9 @@ export const useLaunchStore = defineStore("launch", {
     async saveLaunch(launch: Launch) {
       try {
         this._updateAsyncStatus({ name: "saveLaunch", status: "loading" });
-        await axios.post("/api/launch", { launch });
-        this.savedLaunches.push(launch);
+        const response = await axios.post("/api/launch", { launch });
+        this.savedLaunches.push(response.data);
         this._updateAsyncStatus({ name: "saveLaunch", status: "success" });
-        await axios.post("/api/launch", { launch });
       } catch (error) {
         console.error(error);
         this._updateAsyncStatus({ name: "saveLaunch", status: "failed" });
