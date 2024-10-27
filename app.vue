@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtLink to="launches"> Launches </NuxtLink>
+    <NuxtLink to="/"> Launches </NuxtLink>
     <NuxtLink to="saved"> Saved </NuxtLink>
 
     <NuxtPage />

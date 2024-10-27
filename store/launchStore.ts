@@ -10,6 +10,7 @@ export const useLaunchStore = defineStore("launch", {
     launches: [] as Launch[],
     savedLaunches: [] as Launch[],
   }),
+
   actions: {
     async fetchLaunches() {
       const response = await axios.get(
