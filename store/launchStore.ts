@@ -28,9 +28,8 @@ export const useLaunchStore = defineStore("launch", {
 
     async saveLaunch(launch: Launch) {
       this.savedLaunches.push(launch);
-      const response = await axios.post("/api/saveLaunch", { launch });
+      const response = await axios.post("/api/launch", { launch });
       console.log({ response });
-      // Here, you would also send a request to your backend to save the launch
     },
 
     async removeLaunch(flight_number: number) {
@@ -38,10 +37,9 @@ export const useLaunchStore = defineStore("launch", {
         (launch) => launch.flight_number !== flight_number,
       );
       const response = await axios.delete(
-        "/api/removeLaunch?flight_number=" + flight_number,
+        "/api/launch?flight_number=" + flight_number,
       );
       console.log(response);
-      // Here, you would also send a request to your backend to remove the launch
     },
   },
 });
