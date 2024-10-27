@@ -10,13 +10,20 @@ const launchStore = useLaunchStore();
     <div
       v-for="launch in launchStore.savedLaunches"
       :key="launch.flight_number"
-      class="card"
+      class="card bg-neutral text-neutral-content w-96 h-48 m-4"
     >
-      <h2>{{ launch.name }}</h2>
-      <p>Flight Number: {{ launch.flight_number }}</p>
-      <button @click="launchStore.removeLaunch(launch.flight_number)">
-        Remove
-      </button>
+      <div class="card-body items-center text-center">
+        <h2 class="card-title">{{ launch.name }}</h2>
+        <p>Flight Number: {{ launch.flight_number }}</p>
+        <div class="card-actions justify-end">
+          <button
+            class="btn btn-primary"
+            @click="launchStore.removeLaunch(launch.flight_number)"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
