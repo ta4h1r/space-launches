@@ -77,7 +77,7 @@ export const useLaunchStore = defineStore("launch", {
           status: "loading",
         });
         const response = await axios.get("/api/launch");
-        this.savedLaunches = response.data?.launches;
+        this.savedLaunches = response.data;
         this._updateAsyncStatus({
           name: "getSavedLaunches",
           status: "success",
