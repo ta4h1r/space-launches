@@ -1,4 +1,6 @@
-export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  return { body };
+import { getSavedLaunches } from "~/server/utils/dao";
+
+export default defineEventHandler(async () => {
+  const launches = await getSavedLaunches();
+  return { launches };
 });

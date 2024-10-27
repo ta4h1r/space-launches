@@ -27,19 +27,21 @@ export const useLaunchStore = defineStore("launch", {
     },
 
     async saveLaunch(launch: Launch) {
+      await axios.post("/api/launch", { launch });
       this.savedLaunches.push(launch);
-      const response = await axios.post("/api/launch", { launch });
-      console.log({ response });
     },
 
     async removeLaunch(flight_number: number) {
+      await axios.delete("/api/launch?flight_number=" + flight_number);
       this.savedLaunches = this.savedLaunches.filter(
         (launch) => launch.flight_number !== flight_number,
       );
-      const response = await axios.delete(
-        "/api/launch?flight_number=" + flight_number,
-      );
-      console.log(response);
+    },
+
+    async getSavedLaunches() {
+      const response = await axios.get("/api/launch");
+      this.savedLaunches = response.data?.launches;
+      return this.savedLaunches;
     },
   },
 });

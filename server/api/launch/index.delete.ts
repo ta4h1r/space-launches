@@ -1,4 +1,7 @@
+import { removeLaunch } from "~/server/utils/dao";
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
-  return { query };
+  const removed = await removeLaunch(Number(query.flight_number));
+  return removed;
 });

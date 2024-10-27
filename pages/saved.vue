@@ -2,6 +2,7 @@
 import { defineComponent } from "vue";
 import { useLaunchStore } from "~/store/launchStore";
 const launchStore = useLaunchStore();
+launchStore.getSavedLaunches();
 </script>
 
 <template>
