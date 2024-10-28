@@ -17,16 +17,18 @@ export const useLaunchStore = defineStore("launch", {
 
   getters: {
     getLaunches: (state) => state.launches,
+    getSavedLaunches: (state) => state.savedLaunches,
   },
 
   actions: {
     async fetchLaunches() {
       const notifyStore = useNotifyStore();
       try {
-        const response = await axios.get(
+        const response: Launch[] = await $fetch(
           "https://api.spacexdata.com/v4/launches",
+          { method: "GET" },
         );
-        this.launches = response.data
+        this.launches = response
           .sort(
             (a: Launch, b: Launch) =>
               new Date(b.date_utc).getTime() - new Date(a.date_utc).getTime(),
@@ -35,7 +37,7 @@ export const useLaunchStore = defineStore("launch", {
       } catch (error) {
         console.error(error);
         notifyStore.notify(
-          `Failed to fetch launche\nERROR: ${error}`,
+          `Failed to fetch launches\nERROR: ${error}`,
           NotificationType.Error,
         );
       }
@@ -44,15 +46,16 @@ export const useLaunchStore = defineStore("launch", {
     async saveLaunch(launch: Launch) {
       const notifyStore = useNotifyStore();
       try {
-        const response = await axios.post("/api/launch", { launch });
-        this.savedLaunches.push(response.data);
+        // Using axios here for better error handling
+        await axios.post("/api/launch", { ...launch });
+        await this.fetchSavedLaunches();
         notifyStore.notify(
           `Saved launch ${launch.flight_number}`,
           NotificationType.Success,
         );
       } catch (error) {
         if (isAxiosError(error)) {
-          if (error.response?.data.error.code === 11000) {
+          if (error.response?.status === 409) {
             notifyStore.notify(
               `Already saved launch ${launch.flight_number}`,
               NotificationType.Warning,
@@ -71,8 +74,10 @@ export const useLaunchStore = defineStore("launch", {
     async removeLaunch(flight_number: number) {
       const notifyStore = useNotifyStore();
       try {
-        await axios.delete("/api/launch?flight_number=" + flight_number);
-        await this.getSavedLaunches();
+        await $fetch("/api/launch?flight_number=" + flight_number, {
+          method: "DELETE",
+        });
+        await this.fetchSavedLaunches();
         notifyStore.notify(
           `Removed launch ${flight_number}`,
           NotificationType.Success,
@@ -86,12 +91,13 @@ export const useLaunchStore = defineStore("launch", {
       }
     },
 
-    async getSavedLaunches() {
+    async fetchSavedLaunches() {
       const notifyStore = useNotifyStore();
       try {
-        const response = await axios.get("/api/launch");
-        this.savedLaunches = response.data;
-        return this.savedLaunches;
+        const response: Launch[] = await $fetch("/api/launch", {
+          method: "GET",
+        });
+        this.savedLaunches = response;
       } catch (error) {
         console.error(error);
         notifyStore.notify(

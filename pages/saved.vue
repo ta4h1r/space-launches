@@ -2,13 +2,17 @@
 import { defineComponent } from "vue";
 import { useLaunchStore } from "~/store/launchStore";
 const launchStore = useLaunchStore();
-launchStore.getSavedLaunches();
+launchStore.fetchSavedLaunches();
 </script>
 
 <template>
   <div>
+    <div v-if="!launchStore.getSavedLaunches.length">
+      <span>No saved launches</span>
+    </div>
     <div
-      v-for="launch in launchStore.savedLaunches"
+      v-else
+      v-for="launch in launchStore.getSavedLaunches"
       :key="launch.flight_number"
       class="card bg-neutral text-neutral-content w-96 h-48 m-4"
     >

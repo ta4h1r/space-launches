@@ -36,7 +36,7 @@ export const useNotifyStore = defineStore("notify", {
         notifyTime: Date.now(),
       };
       this.notifications.push(notification);
-      setTimeout(this.removeNotification.bind(this), 3000, notification);
+      setTimeout(this.removeNotification.bind(this), 2000, notification);
     },
     removeNotification(notification: Notification) {
       this.notifications = this.notifications.filter(
