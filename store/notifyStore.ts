@@ -1,9 +1,5 @@
 import { defineStore } from "pinia";
 
-/*
-This store manages User and Account state including the ActiveAccount
-It is used in the Account administration page and the header due to it's account switching features.
-*/
 export interface Notification {
   message: string;
   type: NotificationType;
@@ -11,10 +7,10 @@ export interface Notification {
 }
 
 export enum NotificationType {
-  Info = "alert alert-info",
-  Success = "alert alert-success",
-  Warning = "alert alert-warning",
-  Error = "alert alert-error",
+  Info = "alert alert-info bg-blue-100",
+  Success = "alert alert-success bg-green-100",
+  Warning = "alert alert-warning bg-yellow-100",
+  Error = "alert alert-error bg-red-100",
 }
 
 interface State {
@@ -40,7 +36,7 @@ export const useNotifyStore = defineStore("notify", {
         notifyTime: Date.now(),
       };
       this.notifications.push(notification);
-      setTimeout(this.removeNotification.bind(this), 3000, notification);
+      setTimeout(this.removeNotification.bind(this), 5000, notification);
     },
     removeNotification(notification: Notification) {
       this.notifications = this.notifications.filter(

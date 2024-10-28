@@ -7,17 +7,6 @@ if (!launchStore.getLaunches.length) launchStore.fetchLaunches();
 </script>
 
 <template>
-  <!-- <UNotification -->
-  <!--   v-show=" -->
-  <!--     launchStore.getAsyncStatus.find((it) => it.name === 'saveLaunch') -->
-  <!--       ?.status === 'success' -->
-  <!--   " -->
-  <!--   description="Saved launch" -->
-  <!--   :id="1" -->
-  <!--   :timeout="3000" -->
-  <!--   title="Success" -->
-  <!--   icon="i-heroicons-check-circle" -->
-  <!-- /> -->
   <div class="p-4">
     <span
       class="loading loading-bars loading-lg self-center"
