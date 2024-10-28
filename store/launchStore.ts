@@ -13,18 +13,16 @@ export const useLaunchStore = defineStore("launch", {
   state: () => ({
     launches: [] as Launch[],
     savedLaunches: [] as Launch[],
-    asyncStatus: [] as AsyncStatus[],
   }),
 
   getters: {
-    getAsyncStatus: (state) => state.asyncStatus,
     getLaunches: (state) => state.launches,
   },
 
   actions: {
     async fetchLaunches() {
+      const notifyStore = useNotifyStore();
       try {
-        this._updateAsyncStatus({ name: "fetchLaunches", status: "loading" });
         const response = await axios.get(
           "https://api.spacexdata.com/v4/launches",
         );
@@ -34,78 +32,72 @@ export const useLaunchStore = defineStore("launch", {
               new Date(b.date_utc).getTime() - new Date(a.date_utc).getTime(),
           )
           .slice(0, 30);
-        this._updateAsyncStatus({ name: "fetchLaunches", status: "success" });
       } catch (error) {
         console.error(error);
-        this._updateAsyncStatus({ name: "fetchLaunches", status: "failed" });
+        notifyStore.notify(
+          `Failed to fetch launche\nERROR: ${error}`,
+          NotificationType.Error,
+        );
       }
     },
 
     async saveLaunch(launch: Launch) {
       const notifyStore = useNotifyStore();
       try {
-        notifyStore.notify(
-          `Saving launch ${launch.flight_number}`,
-          NotificationType.Info,
-        );
         const response = await axios.post("/api/launch", { launch });
         this.savedLaunches.push(response.data);
-        notifyStore.notify(`Saved!`, NotificationType.Success);
+        notifyStore.notify(
+          `Saved launch ${launch.flight_number}`,
+          NotificationType.Success,
+        );
       } catch (error) {
         if (isAxiosError(error)) {
           if (error.response?.data.error.code === 11000) {
-            this._updateAsyncStatus({
-              name: "saveLaunch",
-              status: "failed",
-              message: "Already saved this launch",
-            });
+            notifyStore.notify(
+              `Already saved launch ${launch.flight_number}`,
+              NotificationType.Warning,
+            );
+            return;
           }
         }
-        notifyStore.notify(`ERROR: ${error}`, NotificationType.Error);
+        notifyStore.notify(
+          `Failed to save launch ${launch.flight_number}\nERROR: ${error}`,
+          NotificationType.Error,
+        );
         console.error(error);
-        this._updateAsyncStatus({ name: "saveLaunch", status: "failed" });
       }
     },
 
     async removeLaunch(flight_number: number) {
+      const notifyStore = useNotifyStore();
       try {
-        this._updateAsyncStatus({ name: "removeLaunch", status: "loading" });
         await axios.delete("/api/launch?flight_number=" + flight_number);
         await this.getSavedLaunches();
-        this._updateAsyncStatus({ name: "removeLaunch", status: "success" });
+        notifyStore.notify(
+          `Removed launch ${flight_number}`,
+          NotificationType.Success,
+        );
       } catch (error) {
         console.error(error);
-        this._updateAsyncStatus({ name: "removeLaunch", status: "failed" });
+        notifyStore.notify(
+          `Failed to remove launch ${flight_number}\nERROR: ${error}`,
+          NotificationType.Error,
+        );
       }
     },
 
     async getSavedLaunches() {
+      const notifyStore = useNotifyStore();
       try {
-        this._updateAsyncStatus({
-          name: "getSavedLaunches",
-          status: "loading",
-        });
         const response = await axios.get("/api/launch");
         this.savedLaunches = response.data;
-        this._updateAsyncStatus({
-          name: "getSavedLaunches",
-          status: "success",
-        });
         return this.savedLaunches;
       } catch (error) {
         console.error(error);
-        this._updateAsyncStatus({ name: "getSavedLaunches", status: "failed" });
-      }
-    },
-
-    _updateAsyncStatus(asyncStatus: AsyncStatus) {
-      const statusIndex = this.asyncStatus.findIndex(
-        (it) => it.name === asyncStatus.name,
-      );
-      if (statusIndex > -1) {
-        this.asyncStatus[statusIndex] = asyncStatus;
-      } else {
-        this.asyncStatus.push(asyncStatus);
+        notifyStore.notify(
+          `Failed to get saved launches\nERROR: ${error}`,
+          NotificationType.Error,
+        );
       }
     },
   },

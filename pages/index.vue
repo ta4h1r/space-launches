@@ -8,21 +8,14 @@ if (!launchStore.getLaunches.length) launchStore.fetchLaunches();
 
 <template>
   <div class="p-4">
-    <span
-      class="loading loading-bars loading-lg self-center"
-      v-if="
-        launchStore.getAsyncStatus.find((it) => it.name === 'fetchLaunches')
-          ?.status === 'loading'
-      "
-    />
-
-    <table
-      v-if="
-        launchStore.getAsyncStatus.find((it) => it.name === 'fetchLaunches')
-          ?.status === 'success'
-      "
-      class="table table-xs table-pin-rows"
+    <div
+      class="flex flex-col justify-center"
+      v-if="!launchStore.getLaunches.length"
     >
+      <span class="loading loading-bars loading-lg self-center" />
+    </div>
+
+    <table v-else class="table table-xs table-pin-rows">
       <thead>
         <tr>
           <th>Flight No.</th>
