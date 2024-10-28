@@ -1,15 +1,12 @@
 import { defineStore } from "pinia";
-import axios from "axios";
-
-interface Launch {
-  flight_number: number;
-  name: string;
-  date_utc: string;
-}
+import axios, { isAxiosError } from "axios";
+import type { Launch } from "../types/Launch";
+import { NotificationType, useNotifyStore } from "./notifyStore";
 
 interface AsyncStatus {
   name: "fetchLaunches" | "getSavedLaunches" | "removeLaunch" | "saveLaunch";
   status: "loading" | "failed" | "success";
+  message?: string;
 }
 
 export const useLaunchStore = defineStore("launch", {
@@ -45,12 +42,26 @@ export const useLaunchStore = defineStore("launch", {
     },
 
     async saveLaunch(launch: Launch) {
+      const notifyStore = useNotifyStore();
       try {
-        this._updateAsyncStatus({ name: "saveLaunch", status: "loading" });
+        notifyStore.notify(
+          `Saving launch ${launch.flight_number}`,
+          NotificationType.Info,
+        );
         const response = await axios.post("/api/launch", { launch });
         this.savedLaunches.push(response.data);
-        this._updateAsyncStatus({ name: "saveLaunch", status: "success" });
+        notifyStore.notify(`Saved!`, NotificationType.Success);
       } catch (error) {
+        if (isAxiosError(error)) {
+          if (error.response?.data.error.code === 11000) {
+            this._updateAsyncStatus({
+              name: "saveLaunch",
+              status: "failed",
+              message: "Already saved this launch",
+            });
+          }
+        }
+        notifyStore.notify(`ERROR: ${error}`, NotificationType.Error);
         console.error(error);
         this._updateAsyncStatus({ name: "saveLaunch", status: "failed" });
       }
@@ -60,9 +71,7 @@ export const useLaunchStore = defineStore("launch", {
       try {
         this._updateAsyncStatus({ name: "removeLaunch", status: "loading" });
         await axios.delete("/api/launch?flight_number=" + flight_number);
-        this.savedLaunches = this.savedLaunches.filter(
-          (launch) => launch.flight_number !== flight_number,
-        );
+        await this.getSavedLaunches();
         this._updateAsyncStatus({ name: "removeLaunch", status: "success" });
       } catch (error) {
         console.error(error);

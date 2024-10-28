@@ -7,19 +7,30 @@ if (!launchStore.getLaunches.length) launchStore.fetchLaunches();
 </script>
 
 <template>
-  <div>
+  <!-- <UNotification -->
+  <!--   v-show=" -->
+  <!--     launchStore.getAsyncStatus.find((it) => it.name === 'saveLaunch') -->
+  <!--       ?.status === 'success' -->
+  <!--   " -->
+  <!--   description="Saved launch" -->
+  <!--   :id="1" -->
+  <!--   :timeout="3000" -->
+  <!--   title="Success" -->
+  <!--   icon="i-heroicons-check-circle" -->
+  <!-- /> -->
+  <div class="p-4">
     <span
       class="loading loading-bars loading-lg self-center"
       v-if="
         launchStore.getAsyncStatus.find((it) => it.name === 'fetchLaunches')
-          .status === 'loading'
+          ?.status === 'loading'
       "
     />
 
     <table
       v-if="
         launchStore.getAsyncStatus.find((it) => it.name === 'fetchLaunches')
-          .status === 'success'
+          ?.status === 'success'
       "
       class="table table-xs table-pin-rows"
     >

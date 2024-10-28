@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     return await saveNewLaunch(body.launch);
   } catch (error) {
     console.error(error);
-    setResponseStatus(event, 400);
+    setResponseStatus(event, 500);
     return { error };
   }
 });
