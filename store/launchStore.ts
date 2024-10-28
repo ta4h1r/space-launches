@@ -1,28 +1,25 @@
 import { defineStore } from "pinia";
 import axios, { isAxiosError } from "axios";
-import type { Launch } from "../types/Launch";
+import { type Launch, AsyncFunc } from "../types";
 import { NotificationType, useNotifyStore } from "./notifyStore";
-
-interface AsyncStatus {
-  name: "fetchLaunches" | "getSavedLaunches" | "removeLaunch" | "saveLaunch";
-  status: "loading" | "failed" | "success";
-  message?: string;
-}
 
 export const useLaunchStore = defineStore("launch", {
   state: () => ({
     launches: [] as Launch[],
     savedLaunches: [] as Launch[],
+    pendingAsyncCalls: [] as AsyncFunc[], // To decide whether or not we want to display progress loaders
   }),
 
   getters: {
     getLaunches: (state) => state.launches,
     getSavedLaunches: (state) => state.savedLaunches,
+    getPendingAsyncCalls: (state) => state.pendingAsyncCalls,
   },
 
   actions: {
     async fetchLaunches() {
       const notifyStore = useNotifyStore();
+      this._addPendingAsyncCall(AsyncFunc.FetchLaunches);
       try {
         const response: Launch[] = await $fetch(
           "https://api.spacexdata.com/v4/launches",
@@ -41,6 +38,7 @@ export const useLaunchStore = defineStore("launch", {
           NotificationType.Error,
         );
       }
+      this._removePendingAsyncCall(AsyncFunc.FetchLaunches);
     },
 
     async saveLaunch(launch: Launch) {
@@ -93,6 +91,7 @@ export const useLaunchStore = defineStore("launch", {
 
     async fetchSavedLaunches() {
       const notifyStore = useNotifyStore();
+      this._addPendingAsyncCall(AsyncFunc.FetchSavedLaunches);
       try {
         const response: Launch[] = await $fetch("/api/launch", {
           method: "GET",
@@ -105,6 +104,17 @@ export const useLaunchStore = defineStore("launch", {
           NotificationType.Error,
         );
       }
+      this._removePendingAsyncCall(AsyncFunc.FetchSavedLaunches);
+    },
+
+    _addPendingAsyncCall(asyncFunc: AsyncFunc) {
+      this.pendingAsyncCalls.push(asyncFunc);
+    },
+
+    _removePendingAsyncCall(asyncFunc: AsyncFunc) {
+      this.pendingAsyncCalls = this.pendingAsyncCalls.filter(
+        (it) => it != asyncFunc,
+      );
     },
   },
 });

@@ -6,12 +6,22 @@ launchStore.fetchSavedLaunches();
 </script>
 
 <template>
-  <div>
-    <div v-if="!launchStore.getSavedLaunches.length">
-      <span>No saved launches</span>
-    </div>
+  <div class="p-4">
     <div
-      v-else
+      class="flex flex-col justify-center"
+      v-if="
+        !launchStore.getSavedLaunches.length &&
+        launchStore.getPendingAsyncCalls.includes('FetchSavedLaunches')
+      "
+    >
+      <span class="loading loading-bars loading-lg self-center" />
+    </div>
+
+    <div
+      v-else-if="
+        launchStore.getSavedLaunches.length &&
+        !launchStore.getPendingAsyncCalls.includes('FetchSavedLaunches')
+      "
       v-for="launch in launchStore.getSavedLaunches"
       :key="launch.flight_number"
       class="card bg-neutral text-neutral-content w-96 h-48 m-4"
@@ -28,6 +38,14 @@ launchStore.fetchSavedLaunches();
           </button>
         </div>
       </div>
+    </div>
+
+    <div v-else class="flex flex-col justify-center text-center">
+      <span> You have not saved any launches. </span>
+      <span>
+        Go back to
+        <NuxtLink class="link" to="/">all launches</NuxtLink>
+      </span>
     </div>
   </div>
 </template>
