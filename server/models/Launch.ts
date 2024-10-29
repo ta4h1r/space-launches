@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { type Launch } from "~/types";
 
 const FairingsSchema = new mongoose.Schema({
   reused: { type: Boolean, default: null },
