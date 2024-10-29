@@ -9,7 +9,7 @@ to a database.
 
 ### Pre-requisites
 
-Ensure that you have installed the [Docker engine] (https://docs.docker.com/get-docker/) with [Docker Compose](https://docs.docker.com/compose/install/)
+Ensure that you have installed the [Docker engine](https://docs.docker.com/get-docker/) with [Docker Compose](https://docs.docker.com/compose/install/).
 See <a>https://docs.docker.com/compose/gettingstarted/</a> to get started.
 
 ### Steps
@@ -37,6 +37,9 @@ $ echo "MONGODB_URI='mongodb://<password>:<username>@localhost:27017'" >> .env
 
 # Install the correct node version
 $ nvm install
+
+# Install dependencies
+$ npm i
 
 # Run the development server
 $ npm run dev
