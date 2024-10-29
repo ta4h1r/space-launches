@@ -1,4 +1,5 @@
 import LaunchModel from "../models/Launch";
+import { type Launch } from "~/types";
 import dbConnect from "./dbconnect";
 
 export async function saveNewLaunch(body: Launch) {
