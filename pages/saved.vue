@@ -27,11 +27,14 @@ launchStore.fetchSavedLaunches();
       <div
         v-for="launch in launchStore.getSavedLaunches"
         :key="launch.flight_number"
-        class="card bg-neutral text-neutral-content w-72 h-72 m-4"
+        class="card bg-neutral text-neutral-content w-72 m-4"
       >
         <div class="card-body items-center text-center">
           <h2 class="card-title">{{ launch.name }}</h2>
           <p>Flight Number: {{ launch.flight_number }}</p>
+          <div class="self-center">
+            <img :src="launch.links.patch.small" alt="No image" class="h-32" />
+          </div>
           <div class="card-actions justify-end">
             <button
               class="btn btn-primary"
