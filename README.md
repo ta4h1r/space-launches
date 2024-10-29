@@ -1,75 +1,45 @@
-# Nuxt Minimal Starter
+# SpaceX Launches
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This app lists recent SpaceX launch data, and provides the ability to save chosen launches
+to a database.
 
-## Setup
+# Setup
 
-Make sure to install dependencies:
+## Docker
 
-```bash
-# npm
-npm install
+### Pre-requisites
 
-# pnpm
-pnpm install
+Ensure that you have installed the [Docker engine] (https://docs.docker.com/get-docker/) with [Docker Compose](https://docs.docker.com/compose/install/)
+See <a>https://docs.docker.com/compose/gettingstarted/</a> to get started.
 
-# yarn
-yarn install
+### Steps
 
-# bun
-bun install
+```
+$ docker-compose up -d
 ```
 
-## Development Server
+Navigate to http://localhost:3000 and you should see the UI.
 
-Start the development server on `http://localhost:3000`:
+## Locally
 
-```bash
-# npm
-npm run dev
+### Pre-requisites
 
-# pnpm
-pnpm dev
+Ensure that you have installed the following:
 
-# yarn
-yarn dev
+1. [MongoDB server](https://www.mongodb.com/try/download/community)
+2. [Node Version Manager](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
 
-# bun
-bun run dev
+### Steps
+
+```
+# Set the mongodb url environment variable
+$ echo "MONGODB_URI='mongodb://<password>:<username>@localhost:27017'" >> .env
+
+# Install the correct node version
+$ nvm install
+
+# Run the development server
+$ npm run dev
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Navigate to http://localhost:3000 and you should see the UI.
