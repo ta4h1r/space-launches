@@ -36,7 +36,7 @@ Ensure that you have installed the following:
 $ echo "MONGODB_URI='mongodb://<password>:<username>@localhost:27017'" >> .env
 
 # Install the correct node version
-$ nvm install
+$ nvm install 22
 
 # Install dependencies
 $ npm i
