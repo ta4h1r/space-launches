@@ -20,7 +20,7 @@ $ docker-compose up -d
 
 Navigate to http://localhost:3000 and you should see the UI.
 
-## Locally
+## Development
 
 ### Pre-requisites
 
